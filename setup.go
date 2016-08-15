@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-  // register our plugin with Caddy
+	// register our plugin with Caddy
 	caddy.RegisterPlugin("dogstatsd", caddy.Plugin{
 		ServerType: "http",
 		Action:     setup,
@@ -20,35 +20,35 @@ func init() {
 
 func setup(c *caddy.Controller) error {
 	for c.Next() {
-    // only parse if the initial directive is "dogstatsd"
+		// only parse if the initial directive is "dogstatsd"
 		if c.Val() != "dogstatsd" {
 			continue
 		}
 
-    // default config values
+		// default config values
 		var namespace = ""
 		var host = "127.0.0.1:8125"
 		var globalTags = []string{}
 		var sampleRate = 1.0
 
-    // if we have a block, then parse that
-    // e.g.
-    //   dogstatsd {
-    //     host 127.0.0.1:8125
-    //   }
+		// if we have a block, then parse that
+		// e.g.
+		//   dogstatsd {
+		//     host 127.0.0.1:8125
+		//   }
 		for c.NextBlock() {
-      // each line if of the format `{key} {arg} [{arg}...]`
+			// each line if of the format `{key} {arg} [{arg}...]`
 			var key string
 			key = c.Val()
 
 			var args []string
 			args = c.RemainingArgs()
-      // we expect every directive to have at least 1 argument
+			// we expect every directive to have at least 1 argument
 			if len(args) == 0 {
 				return c.ArgErr()
 			}
 
-      // parse directives
+			// parse directives
 			switch key {
 			case "host":
 				host = args[0]
@@ -70,9 +70,9 @@ func setup(c *caddy.Controller) error {
 			}
 		}
 
-    // handle non-block configuration
-    // e.g.
-    //   dogstatsd [{host:port} [{samplerate}]]
+		// handle non-block configuration
+		// e.g.
+		//   dogstatsd [{host:port} [{samplerate}]]
 		if c.NextArg() {
 			var args []string
 			args = c.RemainingArgs()
@@ -88,7 +88,7 @@ func setup(c *caddy.Controller) error {
 			}
 		}
 
-    // add our middleware
+		// add our middleware
 		var cfg *httpserver.SiteConfig
 		cfg = httpserver.GetConfig(c)
 		cfg.AddMiddleware(func(next httpserver.Handler) httpserver.Handler {
@@ -100,7 +100,7 @@ func setup(c *caddy.Controller) error {
 				client.Tags = globalTags
 			}
 
-			return DogstatsdHandler{
+			return dogstatsdHandler{
 				Client:     client,
 				SampleRate: sampleRate,
 				Next:       next,

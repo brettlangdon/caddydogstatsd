@@ -9,15 +9,13 @@ import (
 	"github.com/mholt/caddy/caddyhttp/httpserver"
 )
 
-// DogstatsdHandler is a middleware handler for reporting dogstatsd metrics on requests
-type DogstatsdHandler struct {
+type dogstatsdHandler struct {
 	Client     *statsd.Client
 	SampleRate float64
 	Next       httpserver.Handler
 }
 
-// ServeHTTP is the middleware handler which will emit dogstatsd metrics after handling a request
-func (h DogstatsdHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) (int, error) {
+func (h dogstatsdHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) (int, error) {
 	// If we do not have a statsd.Client configured, then skip any processing
 	if h.Client == nil {
 		return h.Next.ServeHTTP(w, r)

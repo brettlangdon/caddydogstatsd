@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/datadog/datadog-go/statsd"
-	"github.com/mholt/caddy/caddyhttp/httpserver"
+	"github.com/caddyserver/caddy/caddyhttp/httpserver"
 )
 
 type dogstatsdHandler struct {
